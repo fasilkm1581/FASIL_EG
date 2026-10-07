@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Emirates Gold | Refinery &amp; Mint, Dubai</title>
+<meta name="description" content="Emirates Gold is a Dubai refinery and mint specialising in refining, assaying, smelting and trading of gold and silver.">
+<meta name="theme-color" content="#0b0a08">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b0a08'/%3E%3Cpath d='M6 21l3-9h14l3 9z' fill='%23B98F2D'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script type="importmap">{"imports":{"three":"./vendor/three.module.min.js"}}</script>
+</head>
+<body class="is-loading">
+
+<!-- PRELOADER -->
+<div class="preloader" id="preloader" aria-hidden="true">
+  <div class="pl-panel pl-top"></div><div class="pl-panel pl-bot"></div>
+  <div class="pl-center">
+    <svg class="pl-bar" viewBox="0 0 220 90" width="220" height="90">
+      <defs>
+        <linearGradient id="plg" x1="0" x2="1"><stop offset="0" stop-color="#7a5a14"/><stop offset=".5" stop-color="#f1d98a"/><stop offset="1" stop-color="#B98F2D"/></linearGradient>
+        <clipPath id="plc"><rect id="plfill" x="0" y="0" width="0" height="90"/></clipPath>
+      </defs>
+      <path d="M40 10h140l30 70H10z" fill="none" stroke="#B98F2D" stroke-opacity=".5" stroke-width="2"/>
+      <path d="M40 10h140l30 70H10z" fill="url(#plg)" clip-path="url(#plc)"/>
+    </svg>
+    <div class="pl-count"><span id="plnum">0</span><small>%</small></div>
+    <div class="pl-word">EMIRATES GOLD</div>
+  </div>
+</div>
+
+<div class="cursor" id="cursor"><span class="c-dot"></span><span class="c-ring"><i></i></span></div>
+<div class="progress"><span id="progress"></span></div>
+<div class="grain" aria-hidden="true"></div>
+
+<!-- HEADER -->
+<header class="header" id="header">
+  <a href="#top" class="logo" data-cursor="link" aria-label="Emirates Gold">
+    <svg viewBox="0 0 44 34" width="38" height="30"><path d="M9 5h26l8 24H1z" fill="#B98F2D"/><path d="M13 9h18l5 16H8z" fill="#0b0a08" opacity=".35"/></svg>
+    <span>Emirates<b>Gold</b></span>
+  </a>
+  <nav class="nav-inline" aria-label="Primary">
+    <a href="#about" data-cursor="link">About</a>
+    <a href="#services" data-cursor="link">Services</a>
+    <a href="#products" data-cursor="link">Products</a>
+    <a href="#collections" data-cursor="link">Collections</a>
+    <a href="#contact" data-cursor="link">Contact</a>
+  </nav>
+  <div class="head-actions">
+    <button class="btn btn-ghost magnetic" data-open="verify" data-cursor="link"><span>Verify Your Bars</span></button>
+    <button class="burger magnetic" id="burger" aria-label="Menu" aria-expanded="false"><i></i><i></i></button>
+  </div>
+</header>
+
+<!-- FULLSCREEN MENU -->
+<div class="menu" id="menu" aria-hidden="true">
+  <div class="menu-inner">
+    <ul class="menu-main">
+      <li><a href="#about"><span>01</span><em>About</em></a></li>
+      <li><a href="#services"><span>02</span><em>Services</em></a></li>
+      <li><a href="#products"><span>03</span><em>Products</em></a></li>
+      <li><a href="#collections"><span>04</span><em>Collections</em></a></li>
+      <li><a href="#compliance"><span>05</span><em>Compliance</em></a></li>
+      <li><a href="#contact"><span>06</span><em>Contact</em></a></li>
+    </ul>
+    <div class="menu-side">
+      <h4>Services</h4>
+      <p>Refining · Assaying · Smelting · Bullion Trading · Minting Coins &amp; Bars · Precious Stones Separation · Corporate Gifting</p>
+      <h4>Dubai, UAE</h4>
+      <p>Al Sarayat Street, Jumeirah Lakes Towers<br>Sheikh Zayed Road, P.O. Box 24305</p>
+      <p><a href="tel:+97143679030">+971 4 367 9030</a><br><a href="mailto:info@emiratesgold.ae">info@emiratesgold.ae</a></p>
+    </div>
+  </div>
+</div>
+
+<main id="top">
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <canvas id="gl" aria-hidden="true"></canvas>
+  <div class="hero-vignette"></div>
+  <div class="hero-slides">
+    <article class="slide is-active" data-pose="0">
+      <p class="eyebrow">Dubai · Refinery &amp; Mint</p>
+      <h1 class="h-xl"><span class="ln"><span>Refining &amp;</span></span><span class="ln"><span>Precious Metal</span></span><span class="ln"><span><i>Trading</i></span></span></h1>
+      <p class="lead">We specialize in refining, assaying, and trading gold and silver.</p>
+      <a href="#services" class="btn btn-gold magnetic" data-cursor="link"><span>Learn More</span><svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+    </article>
+    <article class="slide" data-pose="1">
+      <p class="eyebrow">Responsibly sourced</p>
+      <h2 class="h-xl"><span class="ln"><span>Smelting</span></span><span class="ln"><span>&amp; <i>Assaying</i></span></span></h2>
+      <p class="lead">We source and produce our bars and coins responsibly and ethically.</p>
+      <a href="#services" class="btn btn-gold magnetic" data-cursor="link"><span>Learn More</span><svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+    </article>
+    <article class="slide" data-pose="2">
+      <p class="eyebrow">Protect your future</p>
+      <h2 class="h-xl"><span class="ln"><span>Investment</span></span><span class="ln"><span>Bars &amp; <i>Coins</i></span></span></h2>
+      <p class="lead">Celebrate the present and protect your future by investing in precious metals.</p>
+      <a href="#products" class="btn btn-gold magnetic" data-cursor="link"><span>Work with us</span><svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+    </article>
+    <article class="slide" data-pose="3">
+      <p class="eyebrow">Die making &amp; minting</p>
+      <h2 class="h-xl"><span class="ln"><span>Minting your</span></span><span class="ln"><span>own <i>bars &amp; coins</i></span></span></h2>
+      <p class="lead">Custom designs struck with state-of-the-art machinery.</p>
+      <a href="#services" class="btn btn-gold magnetic" data-cursor="link"><span>Learn More</span><svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+    </article>
+  </div>
+  <div class="hero-ui">
+    <div class="dots" id="dots"><button class="is-active" aria-label="Slide 1"><i></i></button><button aria-label="Slide 2"><i></i></button><button aria-label="Slide 3"><i></i></button><button aria-label="Slide 4"><i></i></button></div>
+    <div class="scroll-cue"><span>Scroll</span><i></i></div>
+  </div>
+  <div class="ticker" aria-label="Indicative metal prices">
+    <div class="tk"><b>XAU</b><span id="pAu">2,650.40</span><em id="cAu">+0.00%</em></div>
+    <div class="tk"><b>XAG</b><span id="pAg">31.18</span><em id="cAg">+0.00%</em></div>
+    <div class="tk note">Indicative USD/oz · demo feed</div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span>Refining</span><i>✦</i><span>Assaying</span><i>✦</i><span>Smelting</span><i>✦</i><span>Bullion Trading</span><i>✦</i><span>Minting</span><i>✦</i><span>999.9 Fine</span><i>✦</i>
+    <span>Refining</span><i>✦</i><span>Assaying</span><i>✦</i><span>Smelting</span><i>✦</i><span>Bullion Trading</span><i>✦</i><span>Minting</span><i>✦</i><span>999.9 Fine</span><i>✦</i>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="about section" id="about">
+  <div class="wrap about-grid">
+    <div class="about-left">
+      <p class="eyebrow reveal">History &amp; Inheritance</p>
+      <h2 class="h-lg" data-split>Thirty years of <em>gold</em> from the City of Gold</h2>
+      <a href="#contact" class="btn btn-ghost magnetic reveal" data-cursor="link"><span>More about us</span></a>
+    </div>
+    <div class="about-right">
+      <p class="fill-text" id="fillText">Emirates Gold is a refinery and mint based in Dubai with a history going back 30 years of manufacturing and trading precious metals locally and internationally. Built over several decades from humble beginnings to a full-service refinery and mint, with a strong customer focus and an emphasis on ethical and responsible sourcing principles, our reputation is second to none.</p>
+    </div>
+  </div>
+  <div class="wrap stats">
+    <div class="stat"><div class="num"><span data-count="30">0</span><small>+</small></div><p>Years of heritage</p></div>
+    <div class="stat"><div class="num"><span data-count="999.9" data-dec="1">0</span></div><p>Fineness achieved</p></div>
+    <div class="stat"><div class="num"><span data-count="7">0</span></div><p>Integrated services</p></div>
+    <div class="stat"><div class="num"><span data-count="51">0</span></div><p>Products &amp; formats</p></div>
+  </div>
+</section>
+
+<!-- SERVICES (pinned horizontal) -->
+<section class="services" id="services">
+  <div class="svc-pin">
+    <div class="svc-head wrap">
+      <p class="eyebrow">Our Services</p>
+      <div class="svc-progress"><span id="svcBar"></span></div>
+      <p class="svc-count"><b id="svcNow">01</b> / 07</p>
+    </div>
+    <div class="svc-track" id="svcTrack">
+      <article class="panel intro"><h2 class="h-lg">What we <em>do</em></h2><p>From scrap to investment-grade bullion, every step is done under one roof in Dubai.</p><div class="drag">Scroll <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></div></article>
+      <article class="panel" data-i="01"><div class="p-art" data-art="refine"></div><span class="big-n">01</span><h3>Refining</h3><p>Refining precious metals such as scrap gold and silver, scrap jewellery, or even higher grade gold doré requires a process that eliminates unwanted materials and purifies the output. This task plays a pivotal role in the production of investment grade gold and silver bars.</p><a class="link" href="#contact" data-cursor="link">Learn More</a></article>
+      <article class="panel" data-i="02"><div class="p-art" data-art="assay"></div><span class="big-n">02</span><h3>Assaying</h3><p>Our laboratory handles gold assaying, metal analysis, and research &amp; development. Assaying monitors quality throughout refining, determining fineness of gold and silver, with traditional fire assay as well as spectrometry.</p><a class="link" href="#contact" data-cursor="link">Learn More</a></article>
+      <article class="panel" data-i="03"><div class="p-art" data-art="smelt"></div><span class="big-n">03</span><h3>Smelting</h3><p>Our smelting department melts fine metal into bars or produces grains from scrap metal for use in our refinery. It is a critical step in almost all of our services and central to our daily operations.</p><a class="link" href="#contact" data-cursor="link">Learn More</a></article>
+      <article class="panel" data-i="04"><div class="p-art" data-art="bullion"></div><span class="big-n">04</span><h3>Bullion Trading</h3><p>We produce a wide range of gold bullion bars refined up to 999.9, with purities matching market demand. All bars are inspected and weighed with precision before being packaged and dispatched.</p><a class="link" href="#contact" data-cursor="link">Learn More</a></article>
+      <article class="panel" data-i="05"><div class="p-art" data-art="mint"></div><span class="big-n">05</span><h3>Minting Coins &amp; Bars</h3><p>Our Die Making &amp; Minting division is equipped with state-of-the-art machinery to produce coins, medals and customised products, with an extensive collection of decorative motifs.</p><a class="link" href="#contact" data-cursor="link">Learn More</a></article>
+      <article class="panel" data-i="06"><div class="p-art" data-art="stones"></div><span class="big-n">06</span><h3>Precious Stones Separation</h3><p>We separate diamonds and precious stones from gold and silver in finished jewellery, a cost-effective way of recycling old jewellery and stock, carried out by experienced and patient chemists.</p><a class="link" href="#contact" data-cursor="link">Learn More</a></article>
+      <article class="panel" data-i="07"><div class="p-art" data-art="gift"></div><span class="big-n">07</span><h3>Corporate Gifting</h3><p>Corporate gifts are an excellent way to nurture connections. A gesture of gratitude keeps your company at the top of everyone's mind and reminds clients and employees that you care.</p><a class="link" href="#contact" data-cursor="link">Learn More</a></article>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section class="products section" id="products">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow reveal">Our Products</p>
+      <h2 class="h-lg" data-split>Bars, coins &amp; <em>granules</em></h2>
+    </div>
+    <div class="cards">
+      <a class="card tilt" href="#contact" data-cursor="view"><div class="card-art"><svg viewBox="0 0 200 120"><use href="#ic-bar"/></svg></div><div class="shine"></div><h3>Investment Bars &amp; Coins</h3><span class="cnt">(30)</span><i class="arrow">↗</i></a>
+      <a class="card tilt" href="#contact" data-cursor="view"><div class="card-art"><svg viewBox="0 0 200 120"><use href="#ic-grain"/></svg></div><div class="shine"></div><h3>Cast Bars &amp; Granules</h3><span class="cnt">(15)</span><i class="arrow">↗</i></a>
+      <a class="card tilt" href="#contact" data-cursor="view"><div class="card-art"><svg viewBox="0 0 200 120"><use href="#ic-coin"/></svg></div><div class="shine"></div><h3>Build Your Own Bars &amp; Coins</h3><span class="cnt">(6)</span><i class="arrow">↗</i></a>
+    </div>
+    <div class="center"><button class="btn btn-gold magnetic" data-open="enquiry" data-cursor="link"><span>Product Enquiry</span></button></div>
+  </div>
+</section>
+
+<!-- COLLECTIONS -->
+<section class="collections" id="collections">
+  <div class="col-bg" id="colBg"></div>
+  <div class="col-pattern" id="colPat"></div>
+  <div class="col-content wrap">
+    <p class="eyebrow reveal">Collections</p>
+    <h2 class="h-xl" data-split>Explore our <em>Arabian Heritage</em> Collections</h2>
+    <a href="#contact" class="btn btn-gold magnetic reveal" data-cursor="link"><span>Explore Now</span><svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+  </div>
+</section>
+
+<!-- COMPLIANCE -->
+<section class="compliance section" id="compliance">
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow reveal">Regulatory Compliance</p><h2 class="h-lg" data-split>Accreditations &amp; <em>responsible</em> sourcing</h2></div>
+    <ul class="comp-list">
+      <li data-cursor="link"><span>01</span><em>Accreditations</em><i>→</i></li>
+      <li data-cursor="link"><span>02</span><em>Policies and Procedures</em><i>→</i></li>
+      <li data-cursor="link"><span>03</span><em>Reports</em><i>→</i></li>
+      <li data-cursor="link"><span>04</span><em>News &amp; Updates</em><i>→</i></li>
+    </ul>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact section" id="contact">
+  <div class="wrap contact-grid">
+    <div>
+      <p class="eyebrow reveal">Get in touch</p>
+      <h2 class="h-lg" data-split>We'd love to answer your <em>questions</em></h2>
+      <p class="muted reveal">Use the form to drop us an e-mail.</p>
+      <div class="addr reveal">
+        <p>Al Sarayat Street, Jumeirah Lakes Towers,<br>FZCO, Sheikh Zayed Road, P.O. Box 24305, Dubai, UAE</p>
+        <p><a href="tel:+97143679030" data-cursor="link">+971 4 367 9030</a><br><a href="mailto:info@emiratesgold.ae" data-cursor="link">info@emiratesgold.ae</a></p>
+      </div>
+    </div>
+    <form class="form reveal" id="contactForm" novalidate>
+      <label class="fld"><input name="name" required placeholder=" "><span>Name *</span></label>
+      <label class="fld"><input name="phone" type="tel" required placeholder=" "><span>Phone Number *</span></label>
+      <label class="fld"><input name="email" type="email" required placeholder=" "><span>Email Address *</span></label>
+      <label class="fld"><textarea name="msg" rows="3" required placeholder=" "></textarea><span>Send us a Message *</span></label>
+      <button class="btn btn-gold magnetic" type="submit" data-cursor="link"><span>Send us a Message</span></button>
+      <p class="form-ok" id="formOk" role="status"></p>
+    </form>
+  </div>
+</section>
+
+<!-- ADVISORY -->
+<section class="advisory">
+  <div class="wrap"><p><b>⚠ Official Advisory:</b> Emirates Gold FZCO operates exclusively through <b>emiratesgold.ae</b>. Unauthorized domains, websites or login portals using our brand name are not affiliated with us. Any website or platform offering purchases, portal access or services under our brand without formal authorization should be treated as fraudulent.</p></div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap foot-grid">
+    <div class="foot-brand">
+      <div class="foot-mark" aria-hidden="true">EMIRATES<br>GOLD</div>
+      <button class="btn btn-ghost magnetic" data-open="verify" data-cursor="link"><span>Verify Your Bars</span></button>
+    </div>
+    <div><h4>Services</h4><ul><li>Refining</li><li>Assaying</li><li>Smelting</li><li>Bullion Trading</li><li>Minting Coins &amp; Bars</li><li>Precious Stones Separation</li></ul></div>
+    <div><h4>Products</h4><ul><li>Investment Bars &amp; Coins</li><li>Cast Bars &amp; Granules</li><li>Build Your Own Bars &amp; Coins</li></ul></div>
+    <div><h4>Contact Us</h4><p>Al Sarayat Street, Jumeirah Lakes Towers, FZCO, Sheikh Zayed Road, P.O. Box 24305, Dubai, UAE</p><p>Tel: +971 4 367 9030<br>Email: info@emiratesgold.ae</p></div>
+  </div>
+  <div class="wrap foot-bottom"><span>Copyright © 2026 Emirates Gold. All Rights Reserved.</span><span>Legal Notice · Terms &amp; Conditions · Privacy Policy</span><a href="#top" class="to-top magnetic" data-cursor="link" aria-label="Back to top">↑</a></div>
+</footer>
+
+<!-- MODALS -->
+<div class="modal" id="modal-enquiry" aria-hidden="true" role="dialog" aria-label="Product Enquiry">
+  <div class="m-back" data-close></div>
+  <form class="m-box" id="enqForm" novalidate>
+    <button type="button" class="m-x" data-close aria-label="Close">×</button>
+    <h3>Product Enquiry</h3>
+    <label class="fld"><input required placeholder=" "><span>Name *</span></label>
+    <label class="fld"><input type="email" required placeholder=" "><span>Email *</span></label>
+    <label class="fld"><input type="tel" required placeholder=" "><span>Mobile Number *</span></label>
+    <label class="fld"><input placeholder=" "><span>How much weight required?</span></label>
+    <label class="fld"><textarea rows="3" required placeholder=" "></textarea><span>Enquiry *</span></label>
+    <button class="btn btn-gold" type="submit"><span>Send!</span></button>
+    <p class="form-ok" id="enqOk" role="status"></p>
+  </form>
+</div>
+<div class="modal" id="modal-verify" aria-hidden="true" role="dialog" aria-label="Verify Your Bars">
+  <div class="m-back" data-close></div>
+  <form class="m-box" id="verForm" novalidate>
+    <button type="button" class="m-x" data-close aria-label="Close">×</button>
+    <h3>Verify Your Bars</h3>
+    <p class="muted">Easily verify your gold bar's certificate number.</p>
+    <label class="fld"><input required placeholder=" "><span>Certificate number *</span></label>
+    <button class="btn btn-gold" type="submit"><span>Verify</span></button>
+    <p class="form-ok" id="verOk" role="status"></p>
+  </form>
+</div>
+
+<!-- SVG sprites -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6e6a6"/><stop offset=".45" stop-color="#B98F2D"/><stop offset="1" stop-color="#6d4f0f"/></linearGradient>
+    <symbol id="ic-bar" viewBox="0 0 200 120"><path d="M50 30h100l28 62H22z" fill="url(#gold)"/><path d="M62 40h76l18 40H44z" fill="#000" opacity=".18"/><text x="100" y="68" text-anchor="middle" font-family="Cormorant Garamond,serif" font-size="12" fill="#3b2a05" letter-spacing="2">999.9</text></symbol>
+    <symbol id="ic-grain" viewBox="0 0 200 120"><g fill="url(#gold)"><circle cx="60" cy="70" r="14"/><circle cx="92" cy="80" r="11"/><circle cx="122" cy="68" r="15"/><circle cx="150" cy="84" r="10"/><circle cx="76" cy="48" r="9"/><circle cx="108" cy="46" r="12"/><circle cx="138" cy="44" r="8"/></g></symbol>
+    <symbol id="ic-coin" viewBox="0 0 200 120"><circle cx="100" cy="60" r="44" fill="url(#gold)"/><circle cx="100" cy="60" r="34" fill="none" stroke="#3b2a05" stroke-opacity=".5" stroke-width="2"/><path d="M100 36l6 16h17l-14 10 5 17-14-10-14 10 5-17-14-10h17z" fill="#3b2a05" opacity=".55"/></symbol>
+  </defs>
+</svg>
+
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/ScrollTrigger.min.js"></script>
+<script src="vendor/lenis.min.js"></script>
+<script type="module" src="js/hero3d.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
