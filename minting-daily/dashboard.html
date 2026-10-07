@@ -1,0 +1,400 @@
+<title>Minting Daily Production</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:wght@500;600&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.1/chart.umd.min.js"></script>
+<style>
+/* Layout: sticky burgundy header (title + live status + filter row), then KPI row, insights, charts, daily log. */
+:root{
+  --page:#F8F4F4;--card:#FFFFFF;--tint:#F4ECED;--border:#EADFE1;--ink:#2A1219;--muted:#9A858A;
+  --accent:#9C7A1F;--accent-soft:#F4EBDD;--gold:#C9A227;--silver:#6B7480;--hl:#E0BA55;
+  --h1:#7D2239;--h2:#5A1428;--h3:#400C1B;--good:#2F7D4F;--bad:#B3392F;
+  --serif:"Source Serif 4",Georgia,serif;--sans:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --page:#150A0E;--card:#1F1015;--tint:#2A161D;--border:#3A222A;--ink:#F2E8EA;--muted:#A8929A;
+  --accent:#E0BA55;--accent-soft:#33261A;--gold:#D9B84A;--silver:#9AA7B4;--h1:#551729;--h2:#33101C;--h3:#150A0E;--good:#5DBB84;--bad:#E57A70;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --page:#150A0E;--card:#1F1015;--tint:#2A161D;--border:#3A222A;--ink:#F2E8EA;--muted:#A8929A;
+  --accent:#E0BA55;--accent-soft:#33261A;--gold:#D9B84A;--silver:#9AA7B4;--h1:#551729;--h2:#33101C;--h3:#150A0E;--good:#5DBB84;--bad:#E57A70;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--page);color:var(--ink);font-family:var(--sans);font-size:14px;font-variant-numeric:tabular-nums}
+.num,.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;padding:18px 28px 16px;background:linear-gradient(90deg,var(--h1),var(--h2),var(--h3));color:#F7EDEF;position:sticky;overflow:visible}
+.top{display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:14px;min-width:0}
+.logo{width:50px;height:50px;flex:none}
+.eyebrow{font-size:11px;letter-spacing:2px;color:#E0BA55;text-transform:uppercase;font-weight:500}
+h1{font:600 21px/1.2 var(--sans);margin:2px 0}
+.sub{font-size:12px;color:#D9C3C8}
+.right{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18)}
+.pill i{width:8px;height:8px;border-radius:50%;background:#7bd99f;display:block}
+.pill.off i{background:#e57a70}
+.dates{font-size:12px;color:#D9C3C8;line-height:1.4;text-align:right}
+.dates b{color:#fff;font-weight:500}
+.theme{position:relative}
+.theme>button{background:#1a0910;color:#F2E8EA;border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:6px 12px;font:500 12px var(--sans);cursor:pointer}
+.menu{position:absolute;right:0;top:calc(100% + 6px);background:#1a0910;border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:4px;min-width:120px;z-index:40}
+.menu button{display:block;width:100%;text-align:left;background:none;border:0;color:#F2E8EA;padding:7px 10px;border-radius:6px;font:12px var(--sans);cursor:pointer}
+.menu button:hover,.menu button[aria-checked=true]{background:rgba(224,186,85,.2)}
+.filters{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 16px;margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.14)}
+.fld{display:flex;flex-direction:column;gap:4px;min-width:0}
+.fld label{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#C7AEB4}
+.fld input,.fld select{background:rgba(0,0,0,.28);color:#F7EDEF;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:6px 8px;font:13px var(--sans);min-width:0;color-scheme:dark}
+.sep{width:1px;align-self:stretch;background:rgba(255,255,255,.18)}
+.btn{background:#C9A227;color:#2A1219;border:0;border-radius:6px;padding:7px 14px;font:600 12px var(--sans);cursor:pointer}
+.count{margin-left:auto;font-size:12px;color:#E0BA55;white-space:nowrap}
+.combo{position:relative;width:240px;max-width:100%}
+.combo input{width:100%}
+.sug{position:absolute;top:calc(100% + 4px);left:0;width:340px;max-width:calc(100vw - 32px);background:var(--card);color:var(--ink);border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.3);z-index:50;overflow:hidden}
+.sug div.it{display:flex;justify-content:space-between;gap:10px;padding:8px 12px;cursor:pointer;font-size:13px}
+.sug div.it.on,.sug div.it:hover{background:var(--accent-soft)}
+.sug mark{background:none;color:var(--accent);font-weight:600}
+.sug small{color:var(--muted);white-space:nowrap}
+.sug .ft{padding:6px 12px;font-size:11px;color:var(--muted);border-top:1px solid var(--border);background:var(--tint)}
+.chip{display:inline-flex;align-items:center;gap:8px;background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:5px 6px 5px 12px;font-size:12px;font-weight:500;max-width:100%}
+.chip button{background:none;border:0;color:inherit;cursor:pointer;font-size:12px}
+main{max-width:1280px;margin:0 auto;padding:20px 28px 40px;display:flex;flex-direction:column;gap:20px}
+.banner{background:var(--accent-soft);border:1px solid var(--accent);color:var(--ink);border-radius:10px;padding:12px 16px}
+.kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;min-width:0}
+.kpi .l{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+.kpi .v{font:500 26px/1.2 var(--mono);margin:6px 0 2px;overflow-wrap:anywhere}
+.kpi .v.t{font:600 16px/1.3 var(--sans);overflow-wrap:anywhere}
+.kpi .s{font-size:12px;color:var(--muted)}
+.up{color:var(--good)}.dn{color:var(--bad)}
+section.sec{display:flex;flex-direction:column;gap:12px}
+h2{font:600 18px var(--serif);margin:0}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:2fr 1fr}.g3{grid-template-columns:1fr 1fr}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;min-width:0}
+.card h3{font:600 13px var(--sans);margin:0 0 10px}
+.cv{position:relative;height:280px}
+.cv.tall{height:340px}
+.insights{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 24px}
+.insights li{padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;line-height:1.5}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;font-size:12px}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);padding:8px 10px;border-bottom:1px solid var(--border);cursor:pointer;user-select:none;white-space:nowrap}
+th.r,td.r{text-align:right}
+td{padding:8px 10px;border-bottom:1px solid var(--border)}
+tbody tr:hover{background:var(--tint)}
+.pg{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:10px;font-size:12px;color:var(--muted)}
+.pg button{background:var(--tint);color:var(--ink);border:1px solid var(--border);border-radius:6px;padding:5px 12px;cursor:pointer;font:12px var(--sans)}
+.pg button:disabled{opacity:.4;cursor:default}
+footer{font-size:12px;color:var(--muted);line-height:1.6;border-top:1px solid var(--border);padding-top:14px}
+:focus-visible{outline:2px solid var(--hl);outline-offset:2px}
+.empty{color:var(--muted);padding:24px;text-align:center}
+@media (max-width:1000px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.g2,.g3{grid-template-columns:1fr}}
+@media (max-width:640px){
+  header{position:static;padding:14px 16px}
+  main{padding:16px}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .insights{grid-template-columns:1fr}
+  .right{justify-content:flex-start}.dates{text-align:left}
+  .count{margin-left:0}.sep{display:none}
+  .combo{width:100%}
+}
+</style>
+
+<header id="hdr">
+  <div class="top">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 50 50" aria-hidden="true"><circle cx="25" cy="25" r="23" fill="none" stroke="#E0BA55" stroke-width="2"/><circle cx="25" cy="25" r="18" fill="#C9A227" opacity=".18"/><text x="25" y="31" text-anchor="middle" font-family="Georgia,serif" font-weight="600" font-size="17" fill="#E0BA55">EG</text></svg>
+      <div style="min-width:0">
+        <div class="eyebrow">Minting Department</div>
+        <h1>Daily Production Report</h1>
+        <div class="sub">Pieces minted by date, client &amp; metal · synced daily from the Minting Daily Report workbook</div>
+      </div>
+    </div>
+    <div class="right">
+      <span class="pill off" id="live"><i></i><span id="liveTxt">Connecting…</span></span>
+      <div class="dates"><div>Data through <b id="through">–</b></div><div>Report generated <b id="gen">–</b></div></div>
+      <div class="theme">
+        <button id="themeBtn" aria-haspopup="menu" aria-expanded="false">◐ Auto ▾</button>
+        <div class="menu" id="themeMenu" role="menu" hidden>
+          <button role="menuitemradio" data-t="light">☀ Light</button>
+          <button role="menuitemradio" data-t="auto">◐ Auto</button>
+          <button role="menuitemradio" data-t="dark">☾ Dark</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="filters">
+    <div class="fld"><label for="fFrom">Date From</label><input type="date" id="fFrom"></div>
+    <div class="fld"><label for="fTo">Date To</label><input type="date" id="fTo"></div>
+    <div class="fld"><label for="fMetal">Metal</label><select id="fMetal"><option value="">All</option><option>Gold</option><option>Silver</option></select></div>
+    <div class="sep"></div>
+    <div class="fld"><label for="fPeriod">Period</label><select id="fPeriod"></select></div>
+    <div class="fld combo"><label for="fClient">Client</label>
+      <div id="clientBox"><input id="fClient" type="text" placeholder="Search clients…" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="sug"></div>
+      <div class="sug" id="sug" role="listbox" hidden></div>
+    </div>
+    <button class="btn" id="reset">Reset</button>
+    <div class="count" id="count">0 records · 0 pcs</div>
+  </div>
+</header>
+
+<main>
+  <div class="banner" id="banner" hidden>The shared database is unavailable, so no production data can be shown. Reload the page, or ask the owner to check access.</div>
+  <div class="kpis" id="kpis"></div>
+
+  <section class="sec"><h2>Key Points</h2><div class="card"><ul class="insights" id="insights"></ul></div></section>
+
+  <section class="sec"><h2>Volume Over Time</h2>
+    <div class="grid g2">
+      <div class="card"><h3>Gold vs Silver — Daily Pieces</h3><div class="cv"><canvas id="cTime" role="img" aria-label="Stacked bars of daily gold and silver pieces"></canvas></div></div>
+      <div class="card"><h3>Metal Split</h3><div class="cv" style="height:220px"><canvas id="cSplit" role="img" aria-label="Doughnut of gold and silver share"></canvas></div><div class="legend" id="splitLegend"></div></div>
+    </div>
+  </section>
+
+  <section class="sec"><h2>By Client</h2>
+    <div class="grid g3">
+      <div class="card"><h3>Client Ranking (Pieces)</h3><div class="cv tall"><canvas id="cRank" role="img" aria-label="Horizontal bars of pieces by client"></canvas></div></div>
+      <div class="card"><h3>Weekday Pattern <span style="color:var(--muted);font-weight:400">· avg pieces per day</span></h3><div class="cv tall"><canvas id="cWeek" role="img" aria-label="Average pieces per weekday"></canvas></div></div>
+    </div>
+    <div class="card"><h3 id="trendT">Client Performance Trend</h3><div class="cv tall"><canvas id="cTrend" role="img" aria-label="Trend of pieces over time"></canvas></div></div>
+  </section>
+
+  <section class="sec"><h2>Full Detail</h2>
+    <div class="card">
+      <h3>Daily Log</h3>
+      <div class="tw"><table><thead><tr>
+        <th data-k="date">Date</th><th data-k="client">Client</th><th data-k="metal">Metal</th><th class="r" data-k="pcs">Pcs</th>
+      </tr></thead><tbody id="tbody"></tbody></table></div>
+      <div class="pg"><span id="pgInfo"></span><span style="display:flex;gap:8px;align-items:center"><button id="prev">Prev</button><span id="pgNo"></span><button id="next">Next</button></span></div>
+    </div>
+  </section>
+
+  <footer>Source: the Minting Daily Report workbook, synced daily at 12 noon. Fix any entry in the workbook; this page has no edit option. Metric: Pcs per transaction, summed by day, client and metal.</footer>
+</main>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=n=>Math.round(n).toLocaleString('en-US');
+const DAY=864e5;
+const parse=s=>{const [y,m,d]=s.split('-').map(Number);return Date.UTC(y,m-1,d)};
+const iso=t=>new Date(t).toISOString().slice(0,10);
+const nice=s=>{const d=new Date(parse(s));return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric',timeZone:'UTC'})};
+const WD=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const wd=t=>(new Date(t).getUTCDay()+6)%7;
+let all=[],state={from:'',to:'',metal:'',client:'',period:'Full Range'},sort={k:'date',d:-1},page=0,charts={};
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+/* theme */
+const tb=$('themeBtn'),tm=$('themeMenu');
+function applyTheme(t){
+  const r=document.documentElement;
+  if(t==='light'||t==='dark')r.setAttribute('data-theme',t);else r.removeAttribute('data-theme');
+  tb.textContent=(t==='light'?'☀ Light':t==='dark'?'☾ Dark':'◐ Auto')+' ▾';
+  tm.querySelectorAll('button').forEach(b=>b.setAttribute('aria-checked',b.dataset.t===t));
+  if(all.length)requestAnimationFrame(drawCharts);
+}
+let saved='auto';try{saved=localStorage.getItem('mi-theme')||'auto'}catch(e){}
+applyTheme(saved);
+tb.onclick=e=>{e.stopPropagation();tm.hidden=!tm.hidden;tb.setAttribute('aria-expanded',!tm.hidden)};
+tm.onclick=e=>{const b=e.target.closest('button');if(!b)return;try{localStorage.setItem('mi-theme',b.dataset.t)}catch(e){}applyTheme(b.dataset.t);tm.hidden=true;tb.setAttribute('aria-expanded','false')};
+document.addEventListener('click',e=>{if(!tm.contains(e.target))tm.hidden=true;if(!$('clientBox').contains(e.target)&&!$('sug').contains(e.target))closeSug()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){tm.hidden=true;closeSug()}});
+matchMedia('(prefers-color-scheme:dark)').addEventListener('change',()=>all.length&&drawCharts());
+
+/* periods */
+const periods=['Custom','Today','Yesterday','This Week','This Month','Last Month','This Quarter','This Year','Full Range'];
+$('fPeriod').innerHTML=periods.map(p=>`<option>${p}</option>`).join('');
+$('fPeriod').value='Full Range';
+function setPeriod(p){
+  const n=new Date(),t=Date.UTC(n.getFullYear(),n.getMonth(),n.getDate()),d=new Date(t);
+  const y=d.getUTCFullYear(),m=d.getUTCMonth();let a='',b='';
+  if(p==='Today')a=b=iso(t);
+  else if(p==='Yesterday')a=b=iso(t-DAY);
+  else if(p==='This Week'){a=iso(t-wd(t)*DAY);b=iso(t-wd(t)*DAY+6*DAY)}
+  else if(p==='This Month'){a=iso(Date.UTC(y,m,1));b=iso(Date.UTC(y,m+1,0))}
+  else if(p==='Last Month'){a=iso(Date.UTC(y,m-1,1));b=iso(Date.UTC(y,m,0))}
+  else if(p==='This Quarter'){const q=Math.floor(m/3)*3;a=iso(Date.UTC(y,q,1));b=iso(Date.UTC(y,q+3,0))}
+  else if(p==='This Year'){a=iso(Date.UTC(y,0,1));b=iso(Date.UTC(y,11,31))}
+  state.from=a;state.to=b;state.period=p;
+  $('fFrom').value=a;$('fTo').value=b;
+}
+$('fPeriod').onchange=e=>{if(e.target.value!=='Custom')setPeriod(e.target.value);state.period=e.target.value;page=0;render()};
+$('fFrom').onchange=e=>{state.from=e.target.value;state.period='Custom';$('fPeriod').value='Custom';page=0;render()};
+$('fTo').onchange=e=>{state.to=e.target.value;state.period='Custom';$('fPeriod').value='Custom';page=0;render()};
+$('fMetal').onchange=e=>{state.metal=e.target.value;page=0;render()};
+$('reset').onclick=()=>{state={from:'',to:'',metal:'',client:'',period:'Full Range'};$('fFrom').value=$('fTo').value='';$('fMetal').value='';$('fPeriod').value='Full Range';$('fClient').value='';page=0;render()};
+
+/* data helpers */
+function bounds(){let lo=Infinity,hi=-Infinity;for(const e of all){const t=e._t;if(t<lo)lo=t;if(t>hi)hi=t}return [lo,hi]}
+function rng(){const [lo,hi]=bounds();return [state.from?parse(state.from):lo,state.to?parse(state.to):hi]}
+function sel(a,b,withClient,metal){return all.filter(e=>e._t>=a&&e._t<=b&&(!state.metal||e.metal===state.metal)&&(!withClient||!state.client||e.client===state.client))}
+const sum=l=>l.reduce((s,e)=>s+e.pcs,0);
+function group(l,f){const m=new Map();for(const e of l){const k=f(e);m.set(k,(m.get(k)||0)+e.pcs)}return m}
+
+/* client combobox */
+let sugItems=[],sugOn=0;
+function clientStats(){
+  const [a,b]=rng(),l=sel(a,b,false),m=new Map();
+  for(const e of l){const o=m.get(e.client)||{n:e.client,p:0,d:new Set()};o.p+=e.pcs;o.d.add(e.date);m.set(e.client,o)}
+  return [...m.values()].sort((x,y)=>y.p-x.p);
+}
+function closeSug(){$('sug').hidden=true;$('fClient').setAttribute('aria-expanded','false')}
+function openSug(){
+  const q=$('fClient').value.trim().toLowerCase();
+  const all_=clientStats(),m=all_.filter(c=>c.n.toLowerCase().includes(q));
+  sugItems=m.slice(0,10);if(sugOn>=sugItems.length)sugOn=0;
+  const s=$('sug');
+  s.innerHTML=sugItems.length?sugItems.map((c,i)=>{
+    const ix=q?c.n.toLowerCase().indexOf(q):-1;
+    const nm=ix>=0?esc(c.n.slice(0,ix))+'<mark>'+esc(c.n.slice(ix,ix+q.length))+'</mark>'+esc(c.n.slice(ix+q.length)):esc(c.n);
+    return `<div class="it${i===sugOn?' on':''}" role="option" data-i="${i}"><span>${nm}</span><small>${fmt(c.p)} pcs · ${c.d.size} days</small></div>`}).join('')+`<div class="ft">${m.length} matching client${m.length===1?'':'s'} · Enter to filter</div>`
+    :'<div class="ft">No matching clients</div>';
+  s.hidden=false;$('fClient').setAttribute('aria-expanded','true');
+}
+function pick(i){const c=sugItems[i];if(!c)return;state.client=c.n;$('fClient').value='';closeSug();page=0;render()}
+$('fClient').oninput=()=>{sugOn=0;openSug()};
+$('fClient').onfocus=openSug;
+$('fClient').onkeydown=e=>{
+  if(e.key==='ArrowDown'){e.preventDefault();sugOn=Math.min(sugOn+1,sugItems.length-1);openSug()}
+  else if(e.key==='ArrowUp'){e.preventDefault();sugOn=Math.max(sugOn-1,0);openSug()}
+  else if(e.key==='Enter'){e.preventDefault();pick(sugOn)}
+};
+$('sug').onmousedown=e=>{const it=e.target.closest('.it');if(it){e.preventDefault();pick(+it.dataset.i)}};
+function renderChip(){
+  const box=$('clientBox');let c=box.querySelector('.chip');
+  if(c)c.remove();
+  $('fClient').hidden=!!state.client;
+  if(state.client){c=document.createElement('span');c.className='chip';c.innerHTML=`<span>${esc(state.client)}</span><button aria-label="Clear client filter">✕</button>`;
+    c.querySelector('button').onclick=()=>{state.client='';page=0;render()};box.appendChild(c)}
+}
+
+/* render */
+let cur=[];
+function render(){
+  renderChip();
+  if(!all.length){$('count').textContent='0 records · 0 pcs';$('kpis').innerHTML='';$('insights').innerHTML='<li>No production data yet. Entries appear here once the workbook has been synced.</li>';
+    $('tbody').innerHTML='<tr><td colspan="4" class="empty">No records to show.</td></tr>';$('pgInfo').textContent='';$('pgNo').textContent='';return}
+  const [a,b]=rng(),len=Math.max(1,Math.round((b-a)/DAY)+1);
+  cur=sel(a,b,true);
+  const prior=sel(a-len*DAY,a-DAY,true);
+  const tot=sum(cur),pt=sum(prior);
+  $('count').textContent=`${fmt(cur.length)} records · ${fmt(tot)} pcs`;
+  const g=sum(cur.filter(e=>e.metal==='Gold')),s=tot-g;
+  const days=new Set(cur.map(e=>e.date)).size,avg=days?tot/days:0;
+  const byC=[...group(cur,e=>e.client)].sort((x,y)=>y[1]-x[1]);
+  const chg=pt?((tot-pt)/pt*100):null;
+  const chgH=chg===null?'<span class="s">no prior data</span>':`<span class="${chg>=0?'up':'dn'}">${chg>=0?'▲':'▼'} ${Math.abs(chg).toFixed(1)}%</span> <span class="s">vs prior ${len} days</span>`;
+  const top=state.client?['Selected Client',state.client,`${fmt(tot)} pcs`]:['Top Client',byC[0]?byC[0][0]:'–',byC[0]?`${fmt(byC[0][1])} pcs · ${(byC[0][1]/tot*100).toFixed(0)}% of total`:''];
+  $('kpis').innerHTML=[
+    ['Total Pieces',`<div class="v">${fmt(tot)}</div><div>${chgH}</div>`],
+    ['Gold Pieces',`<div class="v">${fmt(g)}</div><div class="s">${tot?(g/tot*100).toFixed(0):0}% of total</div>`],
+    ['Silver Pieces',`<div class="v">${fmt(s)}</div><div class="s">${tot?(s/tot*100).toFixed(0):0}% of total</div>`],
+    ['Active Days',`<div class="v">${days}</div><div class="s">of ${len} calendar days</div>`],
+    ['Avg / Active Day',`<div class="v">${fmt(avg)}</div><div class="s">pieces per day</div>`],
+    [top[0],`<div class="v t">${esc(top[1])}</div><div class="s">${esc(top[2])}</div>`]
+  ].map(k=>`<div class="kpi"><div class="l">${k[0]}</div>${k[1]}</div>`).join('');
+  insights(cur,tot,g,s,days,len,byC,chg,avg);
+  drawCharts();renderTable();
+}
+function insights(l,tot,g,s,days,len,byC,chg,avg){
+  const out=[];
+  if(!tot){$('insights').innerHTML='<li>No records match the current filters.</li>';return}
+  out.push(`<b>Metal split:</b> gold ${(g/tot*100).toFixed(0)}% (${fmt(g)} pcs) and silver ${(s/tot*100).toFixed(0)}% (${fmt(s)} pcs).`);
+  if(byC[0])out.push(`<b>Largest client:</b> ${esc(byC[0][0])} with ${fmt(byC[0][1])} pcs, ${(byC[0][1]/tot*100).toFixed(0)}% of the total.`);
+  const byD=[...group(l,e=>e.date)].sort((x,y)=>y[1]-x[1]);
+  if(byD[0])out.push(`<b>Busiest day:</b> ${nice(byD[0][0])} with ${fmt(byD[0][1])} pcs.`);
+  out.push(`<b>Average:</b> ${fmt(avg)} pcs per active day, active on ${days} of ${len} days (${(days/len*100).toFixed(0)}% coverage).`);
+  if(chg!==null)out.push(`<b>Change:</b> ${chg>=0?'up':'down'} ${Math.abs(chg).toFixed(1)}% against the prior ${len} days.`);
+  const wk=weekAvg(l).map((v,i)=>[i,v]).filter(x=>x[1]>0).sort((x,y)=>y[1]-x[1]);
+  if(wk.length>1)out.push(`<b>Weekdays:</b> heaviest on ${WD[wk[0][0]]} (${fmt(wk[0][1])} avg), lightest on ${WD[wk[wk.length-1][0]]} (${fmt(wk[wk.length-1][1])} avg).`);
+  if(byC.length>=3&&!state.client){const t3=byC.slice(0,3).reduce((x,y)=>x+y[1],0);out.push(`<b>Concentration:</b> the top 3 clients make up ${(t3/tot*100).toFixed(0)}% of pieces.`)}
+  $('insights').innerHTML=out.map(x=>`<li>${x}</li>`).join('');
+}
+function weekAvg(l){
+  const sm=Array(7).fill(0),ds=Array.from({length:7},()=>new Set());
+  for(const e of l){const w=wd(e._t);sm[w]+=e.pcs;ds[w].add(e.date)}
+  return sm.map((v,i)=>ds[i].size?v/ds[i].size:0);
+}
+
+/* charts */
+function mk(id,cfg){if(charts[id])charts[id].destroy();charts[id]=new Chart($(id),cfg)}
+function drawCharts(){
+  if(typeof Chart==='undefined'||!all.length)return;
+  const ink=css('--ink'),mut=css('--muted'),grid=css('--border'),gold=css('--gold'),sil=css('--silver'),acc=css('--accent'),card=css('--card');
+  Chart.defaults.font.family='Inter,system-ui,sans-serif';Chart.defaults.color=mut;
+  const base={responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{display:false}}};
+  const scl=(x)=>({x:{stacked:x,grid:{display:false},ticks:{color:mut,maxRotation:0,autoSkip:true}},y:{stacked:x,grid:{color:grid},ticks:{color:mut}}});
+  const dts=[...new Set(cur.map(e=>e.date))].sort();
+  const gm=group(cur.filter(e=>e.metal==='Gold'),e=>e.date),sm=group(cur.filter(e=>e.metal==='Silver'),e=>e.date);
+  mk('cTime',{type:'bar',data:{labels:dts.map(d=>d.slice(5)),datasets:[{label:'Gold',data:dts.map(d=>gm.get(d)||0),backgroundColor:gold},{label:'Silver',data:dts.map(d=>sm.get(d)||0),backgroundColor:sil}]},
+    options:{...base,plugins:{legend:{display:true,labels:{color:ink,boxWidth:10}},tooltip:{callbacks:{title:i=>nice(dts[i[0].dataIndex])}}},scales:scl(true)}});
+  const G=sum(cur.filter(e=>e.metal==='Gold')),S=sum(cur)-G;
+  mk('cSplit',{type:'doughnut',data:{labels:['Gold','Silver'],datasets:[{data:[G,S],backgroundColor:[gold,sil],borderColor:card,borderWidth:2}]},options:{...base,cutout:'62%'}});
+  const T=G+S||1;
+  $('splitLegend').innerHTML=`<span><i class="dot" style="background:${gold}"></i>Gold ${fmt(G)} · ${(G/T*100).toFixed(0)}%</span><span><i class="dot" style="background:${sil}"></i>Silver ${fmt(S)} · ${(S/T*100).toFixed(0)}%</span>`;
+  const byC=[...group(cur,e=>e.client)].sort((x,y)=>y[1]-x[1]);
+  const rk=state.client?byC:byC.slice(0,12);
+  const rowsAll=sel(...rng(),false);const rc=[...group(rowsAll,e=>e.client)].sort((x,y)=>y[1]-x[1]).slice(0,12);
+  const rdata=state.client?[...new Map([...rc,[state.client,sum(cur)]])]:rk;
+  const lbl=n=>n.length>26?n.slice(0,25)+'…':n;
+  mk('cRank',{type:'bar',data:{labels:rdata.map(x=>lbl(x[0])),datasets:[{data:rdata.map(x=>x[1]),backgroundColor:rdata.map(x=>state.client&&x[0]===state.client?css('--hl'):acc)}]},
+    options:{...base,indexAxis:'y',scales:{x:{grid:{color:grid},ticks:{color:mut}},y:{grid:{display:false},ticks:{color:ink,font:{size:11}}}},plugins:{legend:{display:false},tooltip:{callbacks:{title:i=>rdata[i[0].dataIndex][0]}}}}});
+  const wa=weekAvg(cur);
+  mk('cWeek',{type:'bar',data:{labels:WD,datasets:[{data:wa.map(Math.round),backgroundColor:acc}]},options:{...base,scales:scl(false)}});
+  /* trend */
+  const [a,b]=rng(),span=(b-a)/DAY,monthly=span>92;
+  const bk=e=>monthly?e.date.slice(0,7):e.date;
+  const pool=sel(a,b,false);
+  const keys=[...new Set(cur.length?cur.map(bk):pool.map(bk))].sort();
+  let ds;
+  if(state.client){
+    $('trendT').textContent=`Client Performance Trend — ${state.client}`;
+    const gg=group(cur.filter(e=>e.metal==='Gold'),bk),ss=group(cur.filter(e=>e.metal==='Silver'),bk);
+    ds=[{type:'bar',label:'Gold',data:keys.map(k=>gg.get(k)||0),backgroundColor:gold},{type:'bar',label:'Silver',data:keys.map(k=>ss.get(k)||0),backgroundColor:sil}];
+    mk('cTrend',{type:'bar',data:{labels:keys,datasets:ds},options:{...base,plugins:{legend:{display:true,labels:{color:ink,boxWidth:10}}},scales:scl(true)}});
+  }else{
+    $('trendT').textContent=`Client Performance Trend — top 5 clients by ${monthly?'month':'day'}`;
+    const top5=[...group(sel(a,b,true),e=>e.client)].sort((x,y)=>y[1]-x[1]).slice(0,5).map(x=>x[0]);
+    const pal=[acc,gold,sil,'#B3392F','#4F7CAC'];
+    ds=top5.map((c,i)=>{const m=group(cur.filter(e=>e.client===c),bk);return{label:c,data:keys.map(k=>m.get(k)||0),borderColor:pal[i],backgroundColor:pal[i],tension:.25,pointRadius:monthly?3:1.5,borderWidth:2}});
+    mk('cTrend',{type:'line',data:{labels:keys,datasets:ds},options:{...base,plugins:{legend:{display:true,labels:{color:ink,boxWidth:10,font:{size:11}}}},scales:scl(false)}});
+  }
+}
+
+/* table */
+function renderTable(){
+  const k=sort.k,d=sort.d;
+  const l=[...cur].sort((x,y)=>{const A=k==='pcs'?x.pcs:(k==='date'?x.date:String(x[k]).toLowerCase()),B=k==='pcs'?y.pcs:(k==='date'?y.date:String(y[k]).toLowerCase());return (A<B?-1:A>B?1:0)*d||x.client.localeCompare(y.client)});
+  const pages=Math.max(1,Math.ceil(l.length/12));if(page>=pages)page=pages-1;
+  const sl=l.slice(page*12,page*12+12);
+  $('tbody').innerHTML=sl.length?sl.map(e=>`<tr><td class="mono">${nice(e.date)}</td><td>${esc(e.client)}</td><td><i class="dot" style="background:${e.metal==='Gold'?css('--gold'):css('--silver')}"></i>${e.metal}</td><td class="r mono">${fmt(e.pcs)}</td></tr>`).join(''):'<tr><td colspan="4" class="empty">No records match the current filters.</td></tr>';
+  $('pgInfo').textContent=`${fmt(l.length)} records${state.client?' · filtered to '+state.client:''}`;
+  $('pgNo').textContent=`Page ${page+1} of ${pages}`;
+  $('prev').disabled=page===0;$('next').disabled=page>=pages-1;
+  document.querySelectorAll('th').forEach(h=>h.textContent=h.textContent.replace(/ [▲▼]$/,'')+(h.dataset.k===k?(d>0?' ▲':' ▼'):''));
+}
+$('prev').onclick=()=>{page--;renderTable()};$('next').onclick=()=>{page++;renderTable()};
+document.querySelectorAll('th').forEach(h=>h.onclick=()=>{const k=h.dataset.k;if(sort.k===k)sort.d*=-1;else{sort={k,d:k==='pcs'||k==='date'?-1:1}}page=0;renderTable()});
+
+/* data */
+function setLive(ok,t){const p=$('live');p.classList.toggle('off',!ok);$('liveTxt').textContent=t}
+function ingest(rows){
+  all=rows.filter(e=>e&&e.date&&e.client&&e.metal&&Number.isFinite(e.pcs)).map(e=>({date:e.date,client:e.client,metal:e.metal,pcs:e.pcs,_t:parse(e.date)}));
+  if(all.length){const [,hi]=bounds();$('through').textContent=nice(iso(hi))}
+  render();
+}
+$('gen').textContent=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+render();
+(async()=>{
+  let db=null;
+  try{db=await (window.claude&&window.claude.use?window.claude.use('db'):null)}catch(e){}
+  if(!db){setLive(false,'Offline');$('banner').hidden=false;return}
+  try{
+    db.collection('entries').onSnapshot(snap=>{
+      const rows=[];snap.forEach?snap.forEach(d=>rows.push(d.data?d.data():d)):(snap.docs||[]).forEach(d=>rows.push(d.data?d.data():d));
+      $('banner').hidden=true;setLive(true,'Live · shared');ingest(rows);
+    },err=>{setLive(false,'Offline');$('banner').hidden=false});
+  }catch(e){setLive(false,'Offline');$('banner').hidden=false}
+})();
+})();
+</script>
