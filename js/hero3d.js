@@ -109,8 +109,8 @@ window.EG3D = state;
     group.scale.setScalar(Math.max(cur.s, .0001));
     coins.forEach((c, i) => {
       const d = c.userData; d.a += d.s * .004;
-      c.position.set(cur.x + Math.cos(d.a) * d.r * .7, d.y + Math.sin(t + i) * .2, Math.sin(d.a) * d.r * .5);
-      c.rotation.set(t * .6 + i, t * .4, 0); c.scale.setScalar(Math.max(state.intro, .0001));
+      c.position.set(cur.x + Math.cos(d.a) * d.r * .7, d.y + (state.narrow ? 2.2 : 0) + Math.sin(t + i) * .2, Math.sin(d.a) * d.r * .5);
+      c.visible = !state.narrow; c.rotation.set(t * .6 + i, t * .4, 0); c.scale.setScalar(Math.max(state.intro, .0001) * (state.narrow ? .6 : 1));
     });
     const a = pg.attributes.position.array;
     for (let i = 0; i < N; i++) { a[i * 3 + 1] += Math.sin(t * .4 + seed[i]) * .0015 + .0015; if (a[i * 3 + 1] > 5) a[i * 3 + 1] = -5; }

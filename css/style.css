@@ -272,3 +272,7 @@ em{font-family:var(--serif);color:var(--gold-l);font-weight:500}
 .no-hscroll .panel,.no-hscroll .panel.intro{width:100%;height:auto;min-height:380px}
 .no-hscroll .svc-progress,.no-hscroll .svc-count{display:none}
 @media (prefers-reduced-motion:reduce){.grain,.scroll-cue i,.spin,.pulse,.float,.drag svg{animation:none}}
+.no-hscroll .p-art{position:static;margin-bottom:auto}
+.no-hscroll .panel{justify-content:flex-start;gap:0}
+.no-hscroll .panel h3{margin-top:26px}
+.no-hscroll .panel.intro{min-height:0}
