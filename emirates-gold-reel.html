@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Emirates Gold Reel</title>
+<style>
+  :root{
+    --bg:#0a0907; --gold1:#f6e08a; --gold2:#d4a72c; --gold3:#8a6414; --ink:#f4efe2; --mute:#a99f86;
+  }
+  *{box-sizing:border-box;margin:0}
+  html,body{height:100%;background:#000;overflow:hidden}
+  body{display:flex;align-items:center;justify-content:center}
+  #stage{
+    width:1080px;height:1920px;flex:none;position:relative;overflow:hidden;
+    background:radial-gradient(900px 900px at 50% 42%,#2a2010 0%,#120e07 45%,var(--bg) 80%);
+    font-family:"Montserrat","Segoe UI",system-ui,sans-serif;color:var(--ink);
+    transform-origin:center center;
+  }
+  .abs{position:absolute;left:0;right:0;text-align:center;opacity:0}
+  #glow{position:absolute;left:50%;top:760px;width:1100px;height:1100px;margin:-550px 0 0 -550px;border-radius:50%;
+    background:radial-gradient(circle,rgba(246,224,138,.35),rgba(212,167,44,0) 62%);opacity:0}
+  #grain{position:absolute;inset:0;opacity:.07;mix-blend-mode:overlay;
+    background-image:repeating-linear-gradient(45deg,#fff 0 1px,transparent 1px 4px)}
+  .line{position:absolute;left:90px;right:90px;height:2px;background:linear-gradient(90deg,transparent,var(--gold2),transparent);opacity:0}
+  #brand{top:120px;font-size:34px;letter-spacing:14px;font-weight:600;color:var(--gold1)}
+  #brand small{display:block;margin-top:14px;font-size:20px;letter-spacing:8px;color:var(--mute);font-weight:500}
+  #bars{position:absolute;left:70px;top:430px;width:940px;height:760px}
+  #purity{top:1210px}
+  #purity .num{font-size:150px;font-weight:800;letter-spacing:4px;line-height:1;
+    background:linear-gradient(180deg,var(--gold1),var(--gold2) 55%,var(--gold3));-webkit-background-clip:text;background-clip:text;color:transparent}
+  #purity .lbl{margin-top:8px;font-size:26px;letter-spacing:10px;color:var(--mute);font-weight:600}
+  #h1{top:1440px;font-size:64px;font-weight:700;line-height:1.15}
+  #h1 em{font-style:normal;color:var(--gold1)}
+  #chips{top:1620px;display:flex;justify-content:center;gap:16px}
+  .chip{border:1.5px solid var(--gold3);color:var(--gold1);padding:12px 24px;border-radius:40px;font-size:24px;letter-spacing:3px;font-weight:600;
+    background:rgba(212,167,44,.07)}
+  #cta{top:1730px}
+  #cta .btn{display:inline-block;padding:20px 54px;border-radius:60px;font-size:34px;font-weight:700;letter-spacing:3px;color:#1a1204;
+    background:linear-gradient(180deg,var(--gold1),var(--gold2));box-shadow:0 0 50px rgba(246,224,138,.35)}
+  #cta .url{margin-top:16px;font-size:26px;letter-spacing:5px;color:var(--mute)}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="glow"></div>
+  <div id="grain"></div>
+  <div class="line" id="l1" style="top:260px"></div>
+
+  <div class="abs" id="brand">EMIRATES GOLD<small>REFINERY &amp; MINT · DUBAI</small></div>
+
+  <svg id="bars" viewBox="0 0 940 760" aria-hidden="true">
+    <defs>
+      <linearGradient id="front" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#f6e08a"/><stop offset=".5" stop-color="#d4a72c"/><stop offset="1" stop-color="#8a6414"/>
+      </linearGradient>
+      <linearGradient id="top" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#fff6c7"/><stop offset="1" stop-color="#f1d46a"/>
+      </linearGradient>
+      <linearGradient id="shine" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".75"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+      </linearGradient>
+      <clipPath id="barclip"><polygon points="20,0 280,0 300,120 0,120"/></clipPath>
+    </defs>
+    <g id="barlayer"></g>
+  </svg>
+
+  <div class="abs" id="purity"><div class="num">999.9</div><div class="lbl">PURITY · ASSAYED &amp; CERTIFIED</div></div>
+  <div class="abs" id="h1">Refined in Dubai.<br><em>Trusted for 30 years.</em></div>
+  <div class="abs" id="chips"><span class="chip">ISO 9001</span><span class="chip">ISO 17025</span><span class="chip">BULLION · COINS · BARS</span></div>
+  <div class="abs" id="cta"><div class="btn">+971 4 367 9030</div><div class="url">EMIRATESGOLD.AE</div></div>
+</div>
+
+<script>
+(function(){
+  var NS="http://www.w3.org/2000/svg", layer=document.getElementById("barlayer");
+  var DURATION=10000;
+
+  // Build a pyramid of bullion bars: 3 / 2 / 1
+  var rows=[{n:3,y:600},{n:2,y:455},{n:1,y:310}], bars=[], idx=0;
+  rows.forEach(function(r){
+    var total=r.n*300+(r.n-1)*14, x0=(940-total)/2;
+    for(var i=0;i<r.n;i++){
+      var g=document.createElementNS(NS,"g");
+      g.setAttribute("transform","translate("+(x0+i*314)+","+r.y+")");
+      var inner=document.createElementNS(NS,"g");
+      inner.innerHTML=
+        '<polygon points="50,-26 250,-26 280,0 20,0" fill="url(#top)"/>'+
+        '<polygon points="20,0 280,0 300,120 0,120" fill="url(#front)"/>'+
+        '<polygon points="20,0 280,0 300,120 0,120" fill="none" stroke="#fff3b0" stroke-opacity=".5" stroke-width="2"/>'+
+        '<rect x="60" y="34" width="180" height="52" rx="6" fill="none" stroke="#6b4c0e" stroke-opacity=".55" stroke-width="2"/>'+
+        '<text x="150" y="68" text-anchor="middle" font-family="Montserrat,Segoe UI,sans-serif" font-weight="700" font-size="26" letter-spacing="3" fill="#6b4c0e" fill-opacity=".8">999.9</text>'+
+        '<g clip-path="url(#barclip)"><rect class="sh" x="-160" y="-10" width="140" height="140" fill="url(#shine)" transform="skewX(-20)"/></g>';
+      g.appendChild(inner); layer.appendChild(g);
+      bars.push({el:inner,order:idx++,shine:inner.querySelector(".sh")});
+    }
+  });
+
+  function fit(){
+    var s=Math.min(innerWidth/1080,innerHeight/1920);
+    document.getElementById("stage").style.transform="scale("+s+")";
+  }
+  addEventListener("resize",fit); fit();
+
+  var EASE="cubic-bezier(.2,.8,.2,1)";
+  function timed(el,t0,fromKF,toKF,dur){
+    // fade in at t0, hold, fade out at 9.4s; one animation spanning the whole loop
+    var o=t0/DURATION, e=Math.min((t0+dur)/DURATION,.93);
+    return el.animate([
+      Object.assign({offset:0,easing:EASE},fromKF),
+      Object.assign({offset:o,easing:EASE},fromKF),
+      Object.assign({offset:e},toKF),
+      Object.assign({offset:.94},toKF),
+      Object.assign({offset:1},fromKF)
+    ],{duration:DURATION,iterations:Infinity});
+  }
+  var show={opacity:1,transform:"none"};
+  function rise(id,t0){ timed(document.getElementById(id),t0,{opacity:0,transform:"translateY(40px)"},show,900); }
+
+  timed(document.getElementById("glow"),200,{opacity:0,transform:"scale(.6)"},{opacity:1,transform:"scale(1)"},2200);
+  timed(document.getElementById("l1"),700,{opacity:0,transform:"scaleX(0)"},{opacity:.9,transform:"scaleX(1)"},900);
+
+  timed(document.getElementById("brand"),300,{opacity:0,letterSpacing:"40px"},{opacity:1,letterSpacing:"14px"},1400);
+
+  // bars drop in one by one
+  bars.forEach(function(b){
+    var t0=1100+b.order*330;
+    timed(b.el,t0,{opacity:0,transform:"translateY(-260px)"},{opacity:1,transform:"translateY(0)"},750);
+    var o=(t0+900)/DURATION;
+    b.shine.animate([
+      {offset:0,transform:"skewX(-20deg) translateX(0)"},
+      {offset:o,transform:"skewX(-20deg) translateX(0)"},
+      {offset:Math.min(o+.09,.9),transform:"skewX(-20deg) translateX(520px)"},
+      {offset:1,transform:"skewX(-20deg) translateX(520px)"}
+    ],{duration:DURATION,iterations:Infinity});
+  });
+
+  rise("purity",3200);
+  rise("h1",4600);
+  rise("chips",6000);
+  rise("cta",7000);
+})();
+</script>
+</body>
+</html>
